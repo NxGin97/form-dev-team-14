@@ -13,5 +13,6 @@ const styles = StyleSheet.create({
   text: {
     color: "#390c4d",
     fontSize: 12,
+    marginLeft: 4,
   },
 });

@@ -14,7 +14,7 @@ export default function LoginSuccessScreen() {
       >
         <Text style={styles.buttonText}>Employee Information Form</Text>
       </Pressable>
-      <Pressable onPress={() => router.push("/(auth)/sign-in")}>
+      <Pressable onPress={() => router.replace("/(auth)/sign-in")}>
         <Text style={{ color: "#390c4d", textDecorationLine: "underline" }}>
           Back to Log in
         </Text>
@@ -23,7 +23,7 @@ export default function LoginSuccessScreen() {
         style={styles.removeButton}
         onPress={async () => {
           await logoutUser();
-          router.push("/(auth)/sign-in");
+          router.replace("/(auth)/sign-in");
         }}
       >
         <Text style={styles.buttonText}>Remove User</Text>

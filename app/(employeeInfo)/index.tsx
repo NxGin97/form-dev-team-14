@@ -59,7 +59,7 @@ export default function EmployeeInfo() {
           onSubmit={async (values, { setSubmitting }) => {
             try {
               console.log(values);
-              await new Promise((r) => setTimeout(r, 200));
+              await new Promise((r) => setTimeout(r, 2000));
               await router.push("/successSubmit");
             } finally {
               setSubmitting(false);
@@ -238,7 +238,7 @@ export default function EmployeeInfo() {
             </View>
           )}
         </Formik>
-        <Pressable onPress={() => router.push("/(auth)/sign-in")}>
+        <Pressable onPress={() => router.replace("/(auth)/sign-in")}>
           <Text style={styles.backToLogin}>Back to Log in</Text>
         </Pressable>
       </View>

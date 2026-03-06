@@ -26,17 +26,17 @@ type signUpValues = {
 const signUpSchema = Yup.object({
   firstName: Yup.string()
     .required("Enter your first name.")
-    .min(3, "Min 3 chracters."),
+    .min(3, "Minimum 3 characters."),
   lastName: Yup.string().required("Enter your last name."),
   email: Yup.string()
     .required("Email is required.")
     .email("Enter a valid email."),
   password: Yup.string()
     .required("Password is required.")
-    .min(6, "Min 6 characters"),
+    .min(6, "Minimum 6 characters"),
   confirmPassword: Yup.string()
     .required("Password is required.")
-    .oneOf([Yup.ref("password")], "Passwords must match"),
+    .oneOf([Yup.ref("password")], "Passwords must match."),
 });
 
 export default function SignUpScreen() {
@@ -55,15 +55,20 @@ export default function SignUpScreen() {
     <Formik
       initialValues={initialValues}
       validationSchema={signUpSchema}
-      onSubmit={async (values) => {
-        const account = {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          email: values.email,
-          password: values.password,
-        };
-        await saveUserAccount(account);
-        router.push("/sign-in");
+      onSubmit={async (values, {setSubmitting }) => {
+        try{
+          const account = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+          };
+          await saveUserAccount(account);
+          await new Promise((r) => setTimeout(r, 2000));
+          router.push("/sign-in");
+        } finally {
+          setSubmitting(false);
+        }
       }}
     >
       {({
@@ -87,16 +92,15 @@ export default function SignUpScreen() {
               autoCapitalize="words"
               value={values.firstName}
               onChangeText={handleChange("firstName")}
-              onFocus={() => setFocusedInput("firstName")}
-              onBlur={() => {
-                handleBlur("firstName");
+              onBlur={(e) => {
+                handleBlur("firstName")(e);
                 setFocusedInput(null);
               }}
+              onFocus={() => setFocusedInput("firstName")}
             />
             <FormErrorText
               message={touched.firstName ? errors.firstName : undefined}
             />
-
             <TextInput
               style={[
                 styles.input,
@@ -107,8 +111,8 @@ export default function SignUpScreen() {
               value={values.lastName}
               onChangeText={handleChange("lastName")}
               onFocus={() => setFocusedInput("lastName")}
-              onBlur={() => {
-                handleBlur("lastName");
+              onBlur={(e) => {
+                handleBlur("lastName")(e);
                 setFocusedInput(null);
               }}
             />
@@ -126,8 +130,8 @@ export default function SignUpScreen() {
               value={values.email}
               onChangeText={handleChange("email")}
               onFocus={() => setFocusedInput("email")}
-              onBlur={() => {
-                handleBlur("email");
+              onBlur={(e) => {
+                handleBlur("email")(e);
                 setFocusedInput(null);
               }}
             />
@@ -143,8 +147,8 @@ export default function SignUpScreen() {
               value={values.password}
               onChangeText={handleChange("password")}
               onFocus={() => setFocusedInput("password")}
-              onBlur={() => {
-                handleBlur("password");
+              onBlur={(e) => {
+                handleBlur("password")(e);
                 setFocusedInput(null);
               }}
             />
@@ -162,15 +166,13 @@ export default function SignUpScreen() {
               value={values.confirmPassword}
               onChangeText={handleChange("confirmPassword")}
               onFocus={() => setFocusedInput("confirmPassword")}
-              onBlur={() => {
-                handleBlur("confirmPassword");
+              onBlur={(e) => {
+                handleBlur("confirmPassword")(e);
                 setFocusedInput(null);
               }}
             />
             <FormErrorText
-              message={
-                touched.confirmPassword ? errors.confirmPassword : undefined
-              }
+              message={touched.confirmPassword ? errors.confirmPassword : undefined}
             />
 
             <Pressable
@@ -179,14 +181,14 @@ export default function SignUpScreen() {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <ActivityIndicator />
+                <Text style={[styles.buttonText, {opacity: 0.4}]}>Creating account...</Text>
               ) : (
                 <Text style={styles.buttonText}>Sign Up</Text>
               )}
             </Pressable>
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Text> Already have an account? </Text>
-              <Pressable onPress={() => router.back()}>
+              <Pressable onPress={() => router.replace("/(auth)/sign-in")}>
                 <Text
                   style={{ color: "#390c4d", textDecorationLine: "underline" }}
                 >
@@ -241,5 +243,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "700",
+  },
+  errorStyle: {
+    color: "#390c4d",
+    marginLeft: 25,
+    marginBottom: 5,
   },
 });

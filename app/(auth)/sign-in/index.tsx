@@ -43,15 +43,20 @@ export default function SignUpScreen() {
     <Formik
       initialValues={initialValues}
       validationSchema={signInSchema}
-      onSubmit={async (values) => {
-        const success = await loginUser(values.email, values.password);
-        if (success) {
-          setLoginError(null);
-          router.push("/(auth)/success");
-        } else {
-          setLoginError("Invalid email or password");
-        }
-      }}
+      onSubmit={async (values, {setSubmitting }) => {
+        try{
+          const success = await loginUser(values.email, values.password);
+          if (success) {
+            setLoginError(null);
+            await new Promise((r) => setTimeout(r, 2000));
+            router.push("/(auth)/success");
+          } else {
+            setLoginError("Invalid email or password");
+          }
+          } finally {
+            setSubmitting(false);
+          }
+        }}
     >
       {({
         values,
@@ -76,8 +81,8 @@ export default function SignUpScreen() {
               value={values.email}
               onChangeText={handleChange("email")}
               onFocus={() => setFocusedInput("email")}
-              onBlur={() => {
-                handleBlur("email");
+              onBlur={(e) => {
+                handleBlur("email")(e);
                 setFocusedInput(null);
               }}
             />
@@ -93,8 +98,8 @@ export default function SignUpScreen() {
               value={values.password}
               onChangeText={handleChange("password")}
               onFocus={() => setFocusedInput("password")}
-              onBlur={() => {
-                handleBlur("password");
+              onBlur={(e) => {
+                handleBlur("password")(e);
                 setFocusedInput(null);
               }}
             />
@@ -117,7 +122,7 @@ export default function SignUpScreen() {
             </Pressable>
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Text> Don't have an account yet? </Text>
-              <Pressable onPress={() => router.push("/(auth)/sign-up")}>
+              <Pressable onPress={() => router.replace("/(auth)/sign-up")}>
                 <Text
                   style={{ color: "#390c4d", textDecorationLine: "underline" }}
                 >
