@@ -50,7 +50,7 @@ export default function SignUpScreen() {
             await new Promise((r) => setTimeout(r, 2000));
             router.push("/(auth)/success");
           } else {
-            setLoginError("Invalid email or password,");
+            setLoginError("Invalid email or password.");
           }
           } finally {
             setSubmitting(false);
